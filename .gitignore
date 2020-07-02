@@ -1,3 +1,6 @@
+#Built version by react
+dist/
+
 # Logs
 logs
 *.log
