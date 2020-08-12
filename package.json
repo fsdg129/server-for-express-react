@@ -29,8 +29,10 @@
     "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^1.4.0",
     "antd": "^4.4.1",
     "less-loader": "^6.2.0",
-    "react-hot-loader": "^4.12.21"
+    "react-hot-loader": "^4.12.21",
+    "react-redux": "^7.2.1"
   }
 }
