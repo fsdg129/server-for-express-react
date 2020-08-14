@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { selectOperatingUser } from './usersSlice';
 import { Descriptions } from 'antd';
 
-export function UserDisplay() {
+export default function UserDisplay() {
 
     const user = useSelector(selectOperatingUser);
 

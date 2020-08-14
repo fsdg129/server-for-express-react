@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { UserDisplay } from './features/users/UserDisplay'
-import { fetchUserById, selectUserStatus, selectUserError } from './features/users/usersSlice'
+import { updateUser, fetchUserById, selectUserStatus, selectUserError } from './features/users/usersSlice'
 
 export default function AppTest() {
 
@@ -14,6 +14,7 @@ export default function AppTest() {
             dispatch( fetchUserById(1) );
             if (status==='succeeded' ){
                 message = 'Fetched user successfully';
+                dispatch(updateUser);
             } else{
                 message = error;
             }

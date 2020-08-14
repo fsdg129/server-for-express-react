@@ -1,14 +1,15 @@
-export const apiUrl = "http://localhost:3000/api/";
+export const apiUrl = "https://localhost:8443/api/";
 
-export const createCorsInit = (data) => ({
+export const createCorsInit = (method, authorization, data) => ({
     body: JSON.stringify(data), // must match 'Content-Type' header
     cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
     credentials: 'include', // include, same-origin, *omit
     headers: {
-      'content-type': 'application/json'
+      'content-type': 'application/json',
+      'Authorization' : 'Basic ' + window.btoa(authorization)
     },
-    method: 'POST', // *GET, POST, PUT, DELETE, etc.
+    method: method, // *GET, POST, PUT, DELETE, etc.
     mode: 'cors', // no-cors, cors, *same-origin
     redirect: 'follow', // manual, *follow, error
-    referrer: 'no-referrer', // *client, no-referrer
+    referrer: 'no-referrer' // *client, no-referrer
 });
