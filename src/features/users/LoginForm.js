@@ -1,13 +1,38 @@
 import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
+
+
 import 'antd/dist/antd.css';
 import './loginForm.css';
 import { Form, Input, Button, Checkbox } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 
+import { updateUsernamePassword, updateUser, fetchUserById } from './features/users/usersSlice'
+
 export default function LoginForm() {
-  const onFinish = values => {
-    console.log('Received values of form: ', values);
-  };
+
+  const dispatch = useDispatch();
+  const history = useHistory();
+
+  const onFinish = ( values => {
+    let loggingInformation = {
+      username: values.username,
+      password: values.password
+    }
+    dispatch( updateUsernamePassword(loggingInformation) );
+    dispatch( fetchUserById("user") ).then( () => {
+      dispatch( updateUser() );
+      dispatch( login() );
+      if(values.remember){
+        window.localStorage.setItem("username", values.username);
+        window.localStorage.setItem("password", values.password);
+      }
+      //change url
+      history.push('/main')
+    });
+
+  });
 
   return (
     <Form

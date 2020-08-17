@@ -1,13 +1,14 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { selectFetchingUserStatus } from './usersSlice';
 
 import 'antd/dist/antd.css';
 import { Alert } from 'antd';
 
+import { selectFetchingUserStatus } from './usersSlice';
+
 export default function LoginFormError() {
   
-  const status = useSelector(selectFetchingUserStatus);
+  let status = useSelector(selectFetchingUserStatus);
 
   return (
     <div>

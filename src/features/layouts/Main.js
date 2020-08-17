@@ -1,4 +1,11 @@
 import React, { useState } from 'react';
+import {
+    Switch,
+    Route,
+    Link,
+    useRouteMatch,
+    useParams
+  } from "react-router-dom";
 
 
 import 'antd/dist/antd.css';
@@ -11,6 +18,8 @@ import {
   TeamOutlined,
   UserOutlined,
 } from '@ant-design/icons';
+
+import User from '../users/User'
 
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -26,40 +35,61 @@ export default function Main() {
 
     return (
         <Layout style={{ minHeight: '100vh' }}>
-        <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
-            <div className="logo" />
-            <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
-            <Menu.Item key="1" icon={<PieChartOutlined />}>
-                Option 1
-            </Menu.Item>
-            <Menu.Item key="2" icon={<DesktopOutlined />}>
-                Option 2
-            </Menu.Item>
-            <SubMenu key="sub1" icon={<UserOutlined />} title="User">
-                <Menu.Item key="3">Tom</Menu.Item>
-                <Menu.Item key="4">Bill</Menu.Item>
-                <Menu.Item key="5">Alex</Menu.Item>
-            </SubMenu>
-            <SubMenu key="sub2" icon={<TeamOutlined />} title="Team">
-                <Menu.Item key="6">Team 1</Menu.Item>
-                <Menu.Item key="8">Team 2</Menu.Item>
-            </SubMenu>
-            <Menu.Item key="9" icon={<FileOutlined />} />
-            </Menu>
-        </Sider>
-        <Layout className="site-layout">
-            <Header className="site-layout-background" style={{ padding: 0 }} />
-            <Content style={{ margin: '0 16px' }}>
-            <Breadcrumb style={{ margin: '16px 0' }}>
-                <Breadcrumb.Item>User</Breadcrumb.Item>
-                <Breadcrumb.Item>Bill</Breadcrumb.Item>
-            </Breadcrumb>
-            <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
-                Bill is a cat.
-            </div>
-            </Content>
-            <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
-        </Layout>
+            <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
+                <div className="logo" >
+                    <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
+
+                        <SubMenu key="sub1" icon={<UserOutlined />} title="Profile">
+                            <Menu.Item key="1">
+                                <Link to="/main/user/log-info" className="menu-text">Display Log Info</Link>
+                            </Menu.Item>
+                            <Menu.Item key="2">
+                                <Link to="/main/user/log-info-edit" className="menu-text">Change Log Info</Link>
+                            </Menu.Item>
+                            <Menu.Item key="3">
+                                <Link to="/main/user/account-info" className="menu-text">Account Info</Link>
+                            </Menu.Item>
+                            <Menu.Item key="4">
+                                <Link to="/main/user/account-info-edit" className="menu-text">Change Account Info</Link>
+                            </Menu.Item>
+                            <Menu.Item key="5">
+                                <Link to="/main/user/log-out" className="menu-text">Log out</Link>
+                            </Menu.Item>
+                        </SubMenu>
+
+                        <SubMenu key="sub2" icon={<BarcodeOutlined />} title="Orders">
+                            <Menu.Item key="6">
+                                <Link to="/main/orders/new-order" className="menu-text">New Order</Link>
+                            </Menu.Item>
+                            <Menu.Item key="7">
+                                <Link to="/main/orders/history-orders" className="menu-text">History Orders</Link>
+                            </Menu.Item>
+                            <Menu.Item key="8">
+                                <Link to="/main/orders/search-orders" className="menu-text">Search Orders</Link>
+                            </Menu.Item>
+                        </SubMenu>
+
+                    </Menu>
+                </div>
+            </Sider>
+            <Layout className="site-layout">
+                <Header className="site-layout-background" style={{ padding: 0 }} />
+                <Content style={{ margin: '0 16px' }}>
+
+                    <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
+                        <Switch>
+                            <Route path={'${match.path}/user'}>
+                                <User />
+                            </Route>
+                            <Route path={match.path}>
+                                <h3>Developing</h3>
+                            </Route>
+                        </Switch>
+                    </div>
+
+                </Content>
+                <Footer style={{ textAlign: 'center' }}>Developed by Yaozu Wu</Footer>
+            </Layout>
         </Layout>
     );
 

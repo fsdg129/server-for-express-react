@@ -16,14 +16,16 @@ export default function Login(){
     return (
     <Layout>
       <Header>
-        <Col span={6}></Col>
-        <Col span={6}></Col>
-        <Col span={6}></Col>
-        <Col span={6}>
-            <Link to="/register">
-                <Button type="primary">Sign Up</Button>
-            </Link>
-        </Col>  
+        <Row>
+          <Col span={6}></Col>
+          <Col span={6}></Col>
+          <Col span={6}></Col>
+          <Col span={6}>
+              <Link to="/register">
+                  <Button type="primary">Sign Up</Button>
+              </Link>
+          </Col> 
+        </Row> 
       </Header>
       <Content>
         <Row>
