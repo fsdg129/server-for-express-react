@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { unwrapResult } from '@reduxjs/toolkit'
+import { Link, useHistory } from 'react-router-dom';
 
 
 import 'antd/dist/antd.css';
@@ -8,12 +9,20 @@ import './loginForm.css';
 import { Form, Input, Button, Checkbox } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 
-import { updateUsernamePassword, updateUser, fetchUserById } from './features/users/usersSlice'
+import { 
+  updateUsernamePassword, 
+  updateOperatingUser, 
+  fetchUserById, 
+  selectFetchingUserError,
+  login 
+} from './usersSlice'
 
 export default function LoginForm() {
 
   const dispatch = useDispatch();
   const history = useHistory();
+
+  let error = useSelector(selectFetchingUserError);
 
   const onFinish = ( values => {
     let loggingInformation = {
@@ -21,16 +30,21 @@ export default function LoginForm() {
       password: values.password
     }
     dispatch( updateUsernamePassword(loggingInformation) );
-    dispatch( fetchUserById("user") ).then( () => {
-      dispatch( updateUser() );
-      dispatch( login() );
-      if(values.remember){
-        window.localStorage.setItem("username", values.username);
-        window.localStorage.setItem("password", values.password);
-      }
-      //change url
-      history.push('/main')
-    });
+    dispatch( fetchUserById("user") )
+      .then(unwrapResult)
+      .then( () => {
+        dispatch( updateOperatingUser() );
+        dispatch( login() );
+        if(values.remember){
+          window.localStorage.setItem("username", values.username);
+          window.localStorage.setItem("password", values.password);
+        }
+        //change url
+        history.push('/main')
+      })
+      .catch( () => {
+        message.error(error.displayMessage);
+      });
 
   });
 
@@ -83,7 +97,7 @@ export default function LoginForm() {
         <Button type="primary" htmlType="submit" className="login-form-button">
           Log in
         </Button>
-        Or <a href="">register now!</a>
+        Or <Link to="/register" className="menu-text">register now!</Link>
       </Form.Item>
     </Form>
   );

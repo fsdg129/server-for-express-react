@@ -1,18 +1,25 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { unwrapResult } from '@reduxjs/toolkit'
+import { unwrapResult } from '@reduxjs/toolkit';
 import { useHistory } from 'react-router-dom';
 
+//import { Offline } from "react-detect-offline";
 import 'antd/dist/antd.css';
 import {
   Form,
   Input,
-  Select,
   Button,
-  AutoComplete,
+  Alert,
+  message
 } from 'antd';
 
-import { addUser, checkUsername, selectUsernameAvailability } from './features/users/usersSlice'
+import { 
+  addUser, 
+  checkUsername, 
+  selectUsernameAvailability, 
+  selectUsernameAvailabilityStatus,
+  selectAddUserError
+} from './usersSlice'
 
 const formItemLayout = {
   labelCol: {
@@ -49,7 +56,11 @@ export default function RegistrationForm() {
 
     const dispatch = useDispatch();
     const history = useHistory();
+
     let boolAvailable = useSelector(selectUsernameAvailability);
+    let status = useSelector(selectUsernameAvailabilityStatus);
+
+    let error = useSelector(selectAddUserError);
 
   const [form] = Form.useForm();
   const onFinish = values => {
@@ -58,19 +69,28 @@ export default function RegistrationForm() {
         password: values.password
     }
       
-    dispatch( addUser(data) ).then( () => {
+    dispatch( addUser(data) )
+      .then(unwrapResult)
+      .then( () => {
         //change url
         history.push('/login')
-    });
+      })
+      .catch( () => {
+        message.error(error.displayMessage);
+      });
   };
 
   const onClick = (event) => {
-      let username = form.getFieldValue("username");
-      dispatch( checkUsername(username) );
-
+    let username = form.getFieldValue("username");
+    dispatch( checkUsername(username) ).then( () =>{
+      if(status == 'failed'){
+        message.error('Internal Error');
+      }
+    });
   };
 
   return (
+  <div>
     <Form
       {...formItemLayout}
       name="register"
@@ -89,12 +109,6 @@ export default function RegistrationForm() {
         ]}
       >
         <Input />
-        <Button onClick = {onClick} >Check username availability</Button>
-        <div>
-        {!boolAvailable ? (
-            <Alert message="The username has been used." type="error" closable />
-        ) : null}
-        </div>
       </Form.Item>
 
       <Form.Item
@@ -141,5 +155,24 @@ export default function RegistrationForm() {
         </Button>
       </Form.Item>
     </Form>
+    <div>
+      <Button onClick = {onClick} >Check username availability</Button>
+      <div>
+      { 
+      (status == 'succeeded' && !boolAvailable) ? 
+        (
+          <Alert message="The username has been used." type="error" closable />
+        ) : null
+      }
+      </div>
+      <div>
+      {/*         
+        <Offline>
+          <Alert message="You are offline" type="error" />
+        </Offline> 
+      */}
+      </div>
+    </div>
+  </div>
   );
 };

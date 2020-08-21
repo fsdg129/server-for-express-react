@@ -1,6 +1,7 @@
 export const apiUrl = "https://localhost:8443/api/";
 
-export const createCorsInit = (method, authorization, data) => ({
+export const createCorsInit = (method, authorization, data) => {
+  let init = {
     body: JSON.stringify(data), // must match 'Content-Type' header
     cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
     credentials: 'include', // include, same-origin, *omit
@@ -12,4 +13,14 @@ export const createCorsInit = (method, authorization, data) => ({
     mode: 'cors', // no-cors, cors, *same-origin
     redirect: 'follow', // manual, *follow, error
     referrer: 'no-referrer' // *client, no-referrer
-});
+  };
+  if(data == null){
+    delete init.body;
+  }
+  if(authorization == null){
+    delete init.headers.Authorization;
+    init.credentials = 'omit';
+  }
+  
+  return init;
+};

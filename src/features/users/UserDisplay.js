@@ -9,7 +9,7 @@ export default function UserDisplay() {
 
     return (
         <Descriptions title="User Info">
-            <Descriptions.Item label="UserName">{user.name}</Descriptions.Item>
+            <Descriptions.Item label="Username">{user.username}</Descriptions.Item>
             <Descriptions.Item label="Priviledge">{user.priviledge}</Descriptions.Item>
         </Descriptions>       
     );

@@ -2,9 +2,9 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { apiUrl, createCorsInit } from '../../properties';
 
 export const fetchUserById = createAsyncThunk('users/fetchUserById', async (id, thunkAPI) => {
-  const userState = thunkAPI.getState().users.loggedInformation;
+  const userState = thunkAPI.getState().users.loggingInformation;
   const authorization = userState.username + ":" + userState.password;
-  const init = createCorsInit("GET", authorization, "");
+  const init = createCorsInit("GET", authorization, null);
   try{
     const response = await fetch(apiUrl+'users/'+id, init);
     if(response.status === 401){
@@ -13,21 +13,21 @@ export const fetchUserById = createAsyncThunk('users/fetchUserById', async (id, 
         developMessage: "",
         errorCode: 1
       }
-      thunkAPI.rejectWithValue(value);
+      return thunkAPI.rejectWithValue(value);
     } else if (response.status === 404) {
       let value = {
         displayMessage: "The expected user doesn't exist.",
         developMessage: "",
         errorCode: 2
       }
-      thunkAPI.rejectWithValue(value);
+      return thunkAPI.rejectWithValue(value);
     } else if (!response.ok) {
       let value = {
         displayMessage: "Unknown Response",
         developMessage: response.status,
         errorCode: 3
       }
-      thunkAPI.rejectWithValue(value);
+      return thunkAPI.rejectWithValue(value);
     } else {
       const data = await response.json();
       if(data.status === "failed"){
@@ -36,7 +36,7 @@ export const fetchUserById = createAsyncThunk('users/fetchUserById', async (id, 
           developMessage: data.developMessage,
           errorCode: data.errorCode
         }
-        thunkAPI.rejectWithValue(value);
+        return thunkAPI.rejectWithValue(value);
       }
       return data.payload;
     }
@@ -48,7 +48,7 @@ export const fetchUserById = createAsyncThunk('users/fetchUserById', async (id, 
       developMessage: err.toString(),
       errorCode: 99
     }
-    thunkAPI.rejectWithValue(value);
+    return thunkAPI.rejectWithValue(value);
   }
   
 });
@@ -61,7 +61,7 @@ export const addUser = createAsyncThunk('users/addUser', async (data, thunkAPI) 
     password: password
   } 
   */
-  const init = createCorsInit("PUSH", "", data);
+  const init = createCorsInit("POST", null, data);
   try{
     const response = await fetch(apiUrl+'users/', init);
     if(response.status === 403){
@@ -70,32 +70,32 @@ export const addUser = createAsyncThunk('users/addUser', async (data, thunkAPI) 
         developMessage: "",
         errorCode: 1
       }
-      thunkAPI.rejectWithValue(value);
+      return thunkAPI.rejectWithValue(value);
     } else if (response.status === 404) {
       let value = {
         displayMessage: "",
         developMessage: "Uncorrect link",
         errorCode: 2
       }
-      thunkAPI.rejectWithValue(value);
+      return thunkAPI.rejectWithValue(value);
     } else if (!response.ok) {
       let value = {
         displayMessage: "Unknown Response",
         developMessage: response.status,
         errorCode: 3
       }
-      thunkAPI.rejectWithValue(value);
+      return thunkAPI.rejectWithValue(value);
     } else {
-      const data = await response.json();
-      if(data.status === "failed"){
+      const jsonData = await response.json();
+      if(jsonData.status === "failed"){
         let value = {
-          displayMessage: data.displayMessage,
-          developMessage: data.developMessage,
-          errorCode: data.errorCode
+          displayMessage: jsonData.displayMessage,
+          developMessage: jsonData.developMessage,
+          errorCode: jsonData.errorCode
         }
-        thunkAPI.rejectWithValue(value);
+        return thunkAPI.rejectWithValue(value);
       }
-      return data.payload;
+      return jsonData.payload;
     }
 
   }
@@ -105,16 +105,16 @@ export const addUser = createAsyncThunk('users/addUser', async (data, thunkAPI) 
       developMessage: err.toString(),
       errorCode: 99
     }
-    thunkAPI.rejectWithValue(value);
+    return thunkAPI.rejectWithValue(value);
   }
   
 });
 
 export const checkUsername = createAsyncThunk('users/checkUsername', async (username, thunkAPI) => {
 
-  const init = createCorsInit("HEAD", authorization, "");
+  const init = createCorsInit("HEAD", null, null);
   try{
-    const response = await fetch(apiUrl+'users/'+username, init);
+    const response = await fetch(apiUrl+'users/usernames/'+username, init);
     if(response.status === 401){
       return false;
     } else if (response.status === 404) {
@@ -125,7 +125,7 @@ export const checkUsername = createAsyncThunk('users/checkUsername', async (user
         developMessage: "",
         errorCode: 99
       }
-      thunkAPI.rejectWithValue(value);
+      return thunkAPI.rejectWithValue(value);
     }
 
   }
@@ -135,7 +135,7 @@ export const checkUsername = createAsyncThunk('users/checkUsername', async (user
       developMessage: err.toString(),
       errorCode: 99
     }
-    thunkAPI.rejectWithValue(value);
+    return thunkAPI.rejectWithValue(value);
   }
   
 });
@@ -177,7 +177,7 @@ export const usersSlice = createSlice({
 
     checkUsername: {
       status: "idle",
-      boolAvailable : false,
+      boolAvailable : true,
       error: {
         displayMessage: "",
         developMessage: "",
@@ -188,17 +188,17 @@ export const usersSlice = createSlice({
   },
   reducers: {
     updateOperatingUser: (state, action) => {
-      state.operatingUser = state.cachedUser;
+      state.operatingUser = state.fetchUserById.cachedUser;
     },
     updateUsernamePassword: (state, action) => {
       state.loggingInformation.username = action.payload.username;
       state.loggingInformation.password = action.payload.password;
     },
     login: (state, action) => {
-      state.loggedInformation.boolLoggedIn = true;
+      state.loggingInformation.boolLoggedIn = true;
     },
     logout: (state, action) => {
-      state.loggedInformation.boolLoggedIn = false;
+      state.loggingInformation.boolLoggedIn = false;
     }
   },
   extraReducers: {
@@ -256,10 +256,17 @@ export const usersSlice = createSlice({
   }
 });
 
-export const { updateUser } = usersSlice.actions;
+export const { updateOperatingUser, updateUsernamePassword, login, logout } = usersSlice.actions;
 
 export default usersSlice.reducer;
 
 export const selectOperatingUser = state => state.users.operatingUser;
+
 export const selectFetchingUserStatus = state => state.users.fetchUserById.status;
+export const selectFetchingUserError = state => state.users.fetchUserById.error;
+
 export const selectUsernameAvailability = state => state.users.checkUsername.boolAvailable;
+export const selectUsernameAvailabilityStatus = state => state.users.checkUsername.status;
+
+export const selectAddUserStatus = state => state.users.addUser.status;
+export const selectAddUserError = state => state.users.addUser.error;

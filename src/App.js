@@ -1,18 +1,24 @@
 import React, { useState, useEffect } from "react";
 import {hot} from "react-hot-loader";
 import {
-  BrowserRouter as Router,
   Switch,
   Route,
   Link,
   useHistory
 } from "react-router-dom";
-import { Provider, useSelector, useDispatch, } from 'react-redux';
+import { useSelector, useDispatch, } from 'react-redux';
+import { unwrapResult } from '@reduxjs/toolkit';
 
-import store from './app/store';
-import Login from "./Login";
-import Main from "./Main";
-import { updateUsernamePassword, updateUser, fetchUserById } from './features/users/usersSlice'
+
+import Login from "./features/layouts/Login";
+import Main from "./features/layouts/Main";
+import Registration from "./features/layouts/Registration";
+import { 
+  updateUsernamePassword, 
+  updateOperatingUser, 
+  fetchUserById,
+  login
+} from './features/users/usersSlice'
 
 function App(){
 
@@ -30,14 +36,16 @@ function App(){
             password: password
           }
           dispatch( updateUsernamePassword(loggingInformation) );
-          dispatch( fetchUserById("user") ).then( () => {
-            dispatch( updateUser() );
-            dispatch( login() );
-            //change url
-            history.push('/main')
-          }).catch( () => {
-            history.push('/login');
-          });
+          dispatch( fetchUserById("user") )
+            .then(unwrapResult)
+            .then( () => {
+              dispatch( updateOperatingUser() );
+              dispatch( login() );
+              //change url
+              history.push('/main')
+            }).catch( () => {
+              history.push('/login');
+            });
         } else{
           history.push('/login');
         }
@@ -46,21 +54,17 @@ function App(){
   );
 
   return(
-    <Provider store={store}>
-      <Router>
-        <Switch>
-          <Route path="/login">
-            <Login />
-          </Route>
-          <Route path="/main">
-            <Main />
-          </Route>
-          <Route path="/register">
-            <Register />
-          </Route>
-        </Switch>
-      </Router>
-    </Provider>
+      <Switch>
+        <Route path="/login">
+          <Login />
+        </Route>
+        <Route path="/main">
+          <Main />
+        </Route>
+        <Route path="/register">
+          <Registration />
+        </Route>
+      </Switch>
   );
 }
 
