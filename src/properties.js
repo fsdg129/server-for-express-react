@@ -1,4 +1,5 @@
-export const apiUrl = "https://localhost:8443/api/";
+const domain = "https://ec2-35-168-3-98.compute-1.amazonaws.com";
+export const apiUrl = domain + ":8443/api/";
 
 export const createCorsInit = (method, authorization, data) => {
   let init = {
