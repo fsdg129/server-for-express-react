@@ -1,3 +1,6 @@
+#Configuration file
+/env.js
+
 #Built version by react
 dist/
 
