@@ -1,5 +1,20 @@
-const domain = "https://ec2-35-168-3-98.compute-1.amazonaws.com";
-export const apiUrl = domain + ":8443/api/";
+import {CORS_DOMAIN, CORS_PORT} from "../env";
+
+var domain;
+if(CORS_DOMAIN){
+  domain = CORS_DOMAIN;
+} else{
+  domain = "localhost";
+}
+
+var port;
+if(CORS_PORT){
+  port = CORS_PORT;
+} else{
+  port = 8443;
+}
+
+export const apiUrl = "https://" + domain + ":" + port + "/api/";
 
 export const createCorsInit = (method, authorization, data) => {
   let init = {

@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack-dev-server --mode development",
-    "build": "webpack --mode development"
+    "build": "webpack --mode development",
+    "serve": "node server.js"
   },
   "author": "yaozuw",
   "license": "ISC",
@@ -32,6 +33,7 @@
   "dependencies": {
     "@reduxjs/toolkit": "^1.4.0",
     "antd": "^4.4.1",
+    "express": "^4.17.1",
     "less-loader": "^6.2.0",
     "react-detect-offline": "^2.4.0",
     "react-hot-loader": "^4.12.21",
