@@ -7,10 +7,12 @@ const fs = require('fs');
 const HTTP_PORT = process.env.HTTP_PORT || 3000;
 const HTTPS_PORT = process.env.HTTPS_PORT || 3443;
 const MODE = process.env.MODE || "LOCAL";
+const KEY_NAME = process.env.KEY_NAME || 'frontendkey.pem';
+const CERT_NAME = process.env.CERT_NAME || 'frontendcert.pem';
 
 var options = {
-	key: fs.readFileSync('./static/frontendkey.pem'),
-	cert: fs.readFileSync('./static/frontendcert.pem')
+	key: fs.readFileSync('./static/' + KEY_NAME),
+	cert: fs.readFileSync('./static/' + CERT_NAME)
   };
 
 app.use((req, res, next) => {
