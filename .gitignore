@@ -1,5 +1,5 @@
 #Configuration file
-env.js
+/env.js
 #Private Key and cert
 *.pem
 
