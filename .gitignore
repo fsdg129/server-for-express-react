@@ -1,5 +1,7 @@
 #Configuration file
 env.js
+#Private Key and cert
+*.pem
 
 #Built version by react
 dist/
