@@ -1,4 +1,4 @@
-import {CORS_DOMAIN, CORS_PORT} from "../env";
+import {CORS_DOMAIN} from "../env";
 
 var domain;
 if(CORS_DOMAIN){
