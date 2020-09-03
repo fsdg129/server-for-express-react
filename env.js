@@ -1,1 +1,0 @@
-export const CORS_DOMAIN = "localhost:8443";
