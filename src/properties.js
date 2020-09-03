@@ -4,17 +4,11 @@ var domain;
 if(CORS_DOMAIN){
   domain = CORS_DOMAIN;
 } else{
-  domain = "localhost";
+  domain = "localhost:8443";
 }
 
-var port;
-if(CORS_PORT){
-  port = CORS_PORT;
-} else{
-  port = 8443;
-}
 
-export const apiUrl = "https://" + domain + ":" + port + "/api/";
+export const apiUrl = "https://" + domain + "/api/";
 
 export const createCorsInit = (method, authorization, data) => {
   let init = {
