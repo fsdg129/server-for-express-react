@@ -1,5 +1,5 @@
-#Configuration file
-/env.js
+#Environgment file
+env.js
 #Private Key and cert
 *.pem
 
@@ -110,4 +110,4 @@ dist
 
 # TernJS port file
 .tern-port
-env.js
+
