@@ -73,8 +73,8 @@ export const addUser = createAsyncThunk('users/addUser', async (data, thunkAPI) 
       return thunkAPI.rejectWithValue(value);
     } else if (response.status === 404) {
       let value = {
-        displayMessage: "",
-        developMessage: "Uncorrect link",
+        displayMessage: "Internal Error",
+        developMessage: "Incorrect link",
         errorCode: 2
       }
       return thunkAPI.rejectWithValue(value);
@@ -231,6 +231,7 @@ export const usersSlice = createSlice({
       if(action.payload){
         state.addUser.error = action.payload;
       } else{
+        state.addUser.error.displayMessage = "Internal Error";
         state.addUser.error.developMessage = action.error.message;
       }
       
@@ -265,8 +266,7 @@ export const selectOperatingUser = state => state.users.operatingUser;
 export const selectFetchingUserStatus = state => state.users.fetchUserById.status;
 export const selectFetchingUserError = state => state.users.fetchUserById.error;
 
-export const selectUsernameAvailability = state => state.users.checkUsername.boolAvailable;
-export const selectUsernameAvailabilityStatus = state => state.users.checkUsername.status;
+export const selectUsernameAvailabilityError = state => state.users.checkUsername.error;
 
 export const selectAddUserStatus = state => state.users.addUser.status;
 export const selectAddUserError = state => state.users.addUser.error;

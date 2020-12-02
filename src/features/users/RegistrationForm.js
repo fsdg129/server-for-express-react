@@ -9,15 +9,14 @@ import {
   Form,
   Input,
   Button,
-  Alert,
+  Modal,
   message
 } from 'antd';
 
 import { 
   addUser, 
   checkUsername, 
-  selectUsernameAvailability, 
-  selectUsernameAvailabilityStatus,
+  selectUsernameAvailabilityError,
   selectAddUserError
 } from './usersSlice'
 
@@ -35,7 +34,7 @@ const formItemLayout = {
       span: 24,
     },
     sm: {
-      span: 16,
+      span: 8,
     },
   },
 };
@@ -54,13 +53,11 @@ const tailFormItemLayout = {
 
 export default function RegistrationForm() {
 
-    const dispatch = useDispatch();
-    const history = useHistory();
+  const dispatch = useDispatch();
+  const history = useHistory();
 
-    let boolAvailable = useSelector(selectUsernameAvailability);
-    let status = useSelector(selectUsernameAvailabilityStatus);
-
-    let error = useSelector(selectAddUserError);
+  let usernameAvailabilityError = useSelector(selectUsernameAvailabilityError);
+  let addUsererror = useSelector(selectAddUserError);
 
   const [form] = Form.useForm();
   const onFinish = values => {
@@ -72,35 +69,47 @@ export default function RegistrationForm() {
     dispatch( addUser(data) )
       .then(unwrapResult)
       .then( () => {
-        //change url
-        history.push('/login')
+        Modal.success({
+          content: 'Sign up successfully. Click Ok and the page will redirect to login page.',
+          onOk() {
+            //change url
+            history.push('/login');
+          },
+        });
       })
       .catch( () => {
-        message.error(error.displayMessage);
+        message.error(addUsererror.displayMessage);
       });
   };
 
   const onClick = (event) => {
     let username = form.getFieldValue("username");
-    dispatch( checkUsername(username) ).then( () =>{
-      if(status == 'failed'){
-        message.error('Internal Error');
-      }
-    });
+    dispatch( checkUsername(username) )
+      .then(unwrapResult)
+      .then( (availabille) =>{
+        if(availabille){
+          message.info('You could use this username');
+        } else{
+          message.error('The username has been used');
+        }
+      })
+      .catch( () => {
+        message.error(usernameAvailabilityError.displayMessage);
+      });
   };
 
   return (
-  <div>
-    <Form
-      {...formItemLayout}
-      name="register"
-      form={form}
-      onFinish={onFinish}
-      scrollToFirstError
-    >
+  <Form
+    {...formItemLayout}
+    name="register"
+    form={form}
+    onFinish={onFinish}
+    scrollToFirstError
+  >
+
+    <Form.Item label="username">
       <Form.Item
         name="username"
-        label="username"
         rules={[
           {
             required: true,
@@ -110,69 +119,52 @@ export default function RegistrationForm() {
       >
         <Input />
       </Form.Item>
-
-      <Form.Item
-        name="password"
-        label="Password"
-        rules={[
-          {
-            required: true,
-            message: 'Please input your password!',
-          },
-        ]}
-        hasFeedback
-      >
-        <Input.Password />
-      </Form.Item>
-
-      <Form.Item
-        name="confirm"
-        label="Confirm Password"
-        dependencies={['password']}
-        hasFeedback
-        rules={[
-          {
-            required: true,
-            message: 'Please confirm your password!',
-          },
-          ({ getFieldValue }) => ({
-            validator(rule, value) {
-              if (!value || getFieldValue('password') === value) {
-                return Promise.resolve();
-              }
-
-              return Promise.reject('The two passwords that you entered do not match!');
-            },
-          }),
-        ]}
-      >
-        <Input.Password />
-      </Form.Item>
-
-      <Form.Item {...tailFormItemLayout}>
-        <Button type="primary" htmlType="submit">
-          Register
-        </Button>
-      </Form.Item>
-    </Form>
-    <div>
       <Button onClick = {onClick} >Check username availability</Button>
-      <div>
-      { 
-      (status == 'succeeded' && !boolAvailable) ? 
-        (
-          <Alert message="The username has been used." type="error" closable />
-        ) : null
-      }
-      </div>
-      <div>
-      {/*         
-        <Offline>
-          <Alert message="You are offline" type="error" />
-        </Offline> 
-      */}
-      </div>
-    </div>
-  </div>
+    </Form.Item>
+
+    <Form.Item
+      name="password"
+      label="Password"
+      rules={[
+        {
+          required: true,
+          message: 'Please input your password!',
+        },
+      ]}
+      hasFeedback
+    >
+      <Input.Password />
+    </Form.Item>
+
+    <Form.Item
+      name="confirm"
+      label="Confirm Password"
+      dependencies={['password']}
+      hasFeedback
+      rules={[
+        {
+          required: true,
+          message: 'Please confirm your password!',
+        },
+        ({ getFieldValue }) => ({
+          validator(rule, value) {
+            if (!value || getFieldValue('password') === value) {
+              return Promise.resolve();
+            }
+
+            return Promise.reject('The two passwords that you entered do not match!');
+          },
+        }),
+      ]}
+    >
+      <Input.Password />
+    </Form.Item>
+
+    <Form.Item {...tailFormItemLayout}>
+      <Button type="primary" htmlType="submit">
+        Register
+      </Button>
+    </Form.Item>
+  </Form>
   );
 };
